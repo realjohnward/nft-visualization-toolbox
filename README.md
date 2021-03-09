@@ -23,5 +23,3 @@ Python 3.6 >=
 
    ![alt text](/nft_visualization_toolbox/imgs/example2.png)
 
-## Contact
-If you have a technical issue, please post it in the issues section. Otherwise, you can reach me by contacting my support email: support@jt4ward.com 
