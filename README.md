@@ -6,10 +6,8 @@ This repository contains tools for data visualizing non-fungible tokens on Ether
 Python 3.6 >=
 
 ## Setup 
-1) Install required packages
         pip install -r requirements.txt
-2) Configure default arguments: mainnet_url is required (I used my infura project's mainnet endpoint)
-        python config.py default_args
+        python config.py default_args #(I used my infura project's mainnet endpoint)
 
 ## How to use
         python show.py <template filename> <contract filename> <list of token ids (separated by comma)>
