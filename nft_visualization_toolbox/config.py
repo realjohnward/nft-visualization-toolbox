@@ -2,7 +2,7 @@ import sys
 import json 
 
 
-cfg_type = sys.argv[2]
+cfg_type = sys.argv[1]
 print(cfg_type)
 
 if cfg_type == "default_args":
