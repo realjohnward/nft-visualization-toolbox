@@ -8,6 +8,9 @@ import urllib.request
 import requests 
 import logging 
 from base64 import b64encode 
+import matplotlib.pyplot as plt   
+from io import BytesIO 
+
 
 def fmt_pctc(pctc):
     if not pctc:
@@ -28,6 +31,12 @@ def fmt_txn_hash(txn_hash):
 def fmt_block(block):
     return f'<a href="https://etherscan.io/block/{block}">{block}</a>'
 
+def chart(ax, w=100, h=100):
+    buf = BytesIO()
+    plt.savefig(buf)
+    buf.seek(0)
+    img_html = f'<img width={w} height={h} src="data:image/png;base64,{b64encode(buf.getvalue()).decode()}" />'
+    return img_html
 
 class Contract:
     def __init__(self, cfg, w3=None,ids=""):
@@ -39,13 +48,13 @@ class Contract:
 
 
 class NFT:
-    def __init__(self, contract, id_key, id_value, w3, img_path=None, address=None):
+    def __init__(self, contract, id_key, id, w3, img_path=None, address=None):
         self.contract = contract 
         self.img_path = img_path 
         self.w3 = w3 
-        self.argument_filters = {id_key: int(id_value)}
+        self.argument_filters = {id_key: int(id)}
         self.address = address 
-        self.id_value = id_value 
+        self.id = id 
 
     def events(self, event_name, fromBlock=0, toBlock='latest'):
         event_filter = getattr(self.contract.events, event_name).createFilter(fromBlock=fromBlock, 
@@ -59,14 +68,14 @@ class NFT:
             txnhash = result['transactionHash'].hex()
             block = result['blockNumber']
             ts = self.w3.eth.get_block(block).timestamp
-            dt = datetime.fromtimestamp(ts).strftime("%Y-%m-%d")
-            record = {"Block": block, "Txn": txnhash, "Value (Eth)": self.w3.fromWei(result['args']['value'], 'ether'), "Date": dt}
+            dt = datetime.fromtimestamp(ts)#.strftime("%Y-%m-%d")
+            record = {"Block": block, "Txn": txnhash, "Value (Eth)": float(self.w3.fromWei(result['args']['value'], 'ether')), "Date": dt}
             records.append(record)
 
         return pd.DataFrame.from_records(records)
 
 def nft_img(nft, classes='', w=100, h=100):
-    req = requests.get(f'https://api.opensea.io/api/v1/asset/{nft.address}/{nft.id_value}/', headers={'User-Agent': 'Mozilla/5.0'})
+    req = requests.get(f'https://api.opensea.io/api/v1/asset/{nft.address}/{nft.id}/', headers={'User-Agent': 'Mozilla/5.0'})
     data = req.json()
     img_path = data['image_url']
     logging.error(f"IMAGE PATH: {img_path}")
@@ -90,9 +99,9 @@ def rows(nft_lists):
 
 formatters = {"% Change": fmt_pctc, "Txn": fmt_txn_hash,"From": fmt_addr, "To": fmt_addr, "Block": fmt_block}
 
-def table(df):
+def table(df, classes='Table'):
     try:
-        return df.to_html(columns=['Block','Txn','Value (Eth)'],classes='Table',index=False, border=2, justify='left', escape=False, formatters=formatters)
+        return df.to_html(columns=['Block','Txn','Value (Eth)'],classes=classes,index=False, border=2, justify='left', escape=False, formatters=formatters)
     except KeyError:
         print("Empty table.")
         return "--"
@@ -100,8 +109,13 @@ def table(df):
 def contract(cfg, w3=None, ids=""):
     return Contract(cfg, w3=w3, ids=ids)
 
+def log(obj):
+    logging.error(obj)
+
 ENV = jinja2.Environment(extensions=['jinja2.ext.loopcontrols'])
 ENV.filters = {
+    'chart': chart,
+    'log': log,
     'row': row,
     'table': table,
     'contract': contract,

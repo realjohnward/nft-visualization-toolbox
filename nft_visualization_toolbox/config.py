@@ -9,7 +9,7 @@ if cfg_type == "default_args":
     new_default_args = {}
     default_args = {"mainnet_url": None}
     for k,v in default_args.items():
-        print(k + "?")
+        print(k + ":")
         answer = input("> ")
         new_default_args[k] = answer 
 
