@@ -1,0 +1,7 @@
+{% set c = cfg|contract(w3=w3, ids=ids) %}
+{% for nft in c.nfts %}
+<center>{{ nft|nft_img }}</center>
+<br/>
+{{ nft.events(cfg['event_names']['bid'])|table }}
+<hr>
+{% endfor %}
