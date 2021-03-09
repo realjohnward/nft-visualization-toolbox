@@ -17,11 +17,11 @@ Python 3.6 >=
 ## Examples 
         python show.py sales cryptopunks 4152,4153
 
-        ![alt text](/imgs/example1.png)
+   ![alt text](/imgs/example1.png)
 
         python show.py bids cryptopunks 4152,4153
 
-        ![alt text](/imgs/example2.png)
+   ![alt text](/imgs/example2.png)
 
 ## Contact
-        If you have a technical issue, please post it in the issues section. Otherwise, you can reach me by contacting my support email: support@jt4ward.com 
+If you have a technical issue, please post it in the issues section. Otherwise, you can reach me by contacting my support email: support@jt4ward.com 
