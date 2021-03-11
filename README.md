@@ -17,7 +17,7 @@ Python 3.6 <=
 
    ![alt text](/nft_visualization_toolbox/imgs/example1.png)
 
-        python show.py bids cryptopunks 4152,4153
+        python show.py nft_w_qr cryptopunks 4152
 
    ![alt text](/nft_visualization_toolbox/imgs/example2.png)
 
