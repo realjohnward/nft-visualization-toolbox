@@ -19,5 +19,5 @@ Python 3.6 <=
 
         python show.py nft_w_qr cryptopunks 4152
 
-   ![alt text](/nft_visualization_toolbox/imgs/example2.png)
+   ![alt text](/nft_visualization_toolbox/imgs/example3.png)
 
