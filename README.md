@@ -3,7 +3,7 @@
 This repository contains tools for data visualizing non-fungible tokens on Ethereum.
 
 ## Requirements
-Python 3.6 >=
+Python 3.6 <=
 
 ## Setup 
         pip install -r requirements.txt

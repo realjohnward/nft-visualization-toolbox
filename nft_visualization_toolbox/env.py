@@ -10,7 +10,8 @@ import logging
 from base64 import b64encode 
 import matplotlib.pyplot as plt   
 from io import BytesIO 
-
+import qrcode 
+from time import sleep 
 
 def fmt_pctc(pctc):
     if not pctc:
@@ -38,6 +39,17 @@ def chart(ax, w=100, h=100):
     img_html = f'<img width={w} height={h} src="data:image/png;base64,{b64encode(buf.getvalue()).decode()}" />'
     return img_html
 
+def qrc(url, w=100, h=100):
+    qr = qrcode.QRCode(version=1, box_size=15, border=5)
+    qr.add_data(url)
+    qr.make(fit=True)
+    img = qr.make_image(fill='black', back_color='white')
+    buf = BytesIO()
+    img.save(buf)
+    qrc_html = f'<img width={w} height={h} src="data:image/png;base64,{b64encode(buf.getvalue()).decode()}" />'
+    return qrc_html 
+
+
 class Contract:
     def __init__(self, cfg, w3=None,ids=""):
         self.address = Web3.toChecksumAddress(cfg['address'])
@@ -55,6 +67,10 @@ class NFT:
         self.argument_filters = {id_key: int(id)}
         self.address = address 
         self.id = id 
+
+    @property 
+    def opensea_url(self):
+        return f'https://opensea.io/assets/{self.address}/{self.id}'
 
     def events(self, event_name, fromBlock=0, toBlock='latest'):
         event_filter = getattr(self.contract.events, event_name).createFilter(fromBlock=fromBlock, 
@@ -74,10 +90,16 @@ class NFT:
 
         return pd.DataFrame.from_records(records)
 
-def nft_img(nft, classes='', w=100, h=100):
+def nft_img(nft, classes='', w=100, h=100, timeout=0.5):
+    sleep(timeout)
     req = requests.get(f'https://api.opensea.io/api/v1/asset/{nft.address}/{nft.id}/', headers={'User-Agent': 'Mozilla/5.0'})
     data = req.json()
-    img_path = data['image_url']
+    try:
+        img_path = data['image_url']
+    except KeyError:
+        print(data)
+        return f'<img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" width="{w}" height="{h}" alt="" />'
+
     logging.error(f"IMAGE PATH: {img_path}")
     if img_path.startswith("http"):
         req = urllib.request.Request(img_path, headers={'User-Agent': 'Mozilla/5.0'})
@@ -116,6 +138,7 @@ ENV = jinja2.Environment(extensions=['jinja2.ext.loopcontrols'])
 ENV.filters = {
     'chart': chart,
     'log': log,
+    'qrc': qrc,
     'row': row,
     'table': table,
     'contract': contract,

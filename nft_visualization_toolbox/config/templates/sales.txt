@@ -3,8 +3,8 @@
 {% for nft in c.nfts %}
 {% set events = nft.events(cfg['event_names']['sale']) %}
 <center>
-<div><h3><b>#{{ nft.id }}</b></h3>{{ nft|nft_img(w=300,h=300) }}</div>
-<div>{{ events|table }}</div>
+<div><h3><b>#{{ nft.id }}</b></h3>{{ nft|nft_img(w=200,h=200) }}
+{{ events.plot(y='Value (Eth)', x='Date')|chart(w=300,h=300) }}{{ events|table }}</div>
 </center>
 <hr>
 {% endfor %}

@@ -1,0 +1,11 @@
+{% set c = cfg|contract(w3=w3, ids=ids) %}
+<center>
+<section class="indent-1">
+{% for nft in c.nfts %}
+<section>
+<center>{{ nft|nft_img(w=400,h=400) }}</center>
+<center>{{ "foo"|qrc(w=100,h=100) }}</center>
+</section>
+{% endfor %}
+</section>
+</center>
